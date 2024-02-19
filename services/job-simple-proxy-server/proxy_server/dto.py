@@ -16,15 +16,16 @@ class JobInfo:
 @dataclass
 class CreateJobRequest:
     name: str
-    namespace: str
+    namespace: str = "default"
+    value: int = 10
 
 
 @dataclass
 class DeleteJobRequest:
     name: str
-    namespace: str
+    namespace: str = "default"
 
 
 @dataclass
 class JobStatusResponse:
-    status: Dict
+    status: str

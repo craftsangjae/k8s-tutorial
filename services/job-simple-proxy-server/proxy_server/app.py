@@ -44,9 +44,9 @@ async def list_jobs(namespace="default") -> List[JobInfo]:
 async def create_job(req: CreateJobRequest):
     """ create job
     """
-    job_object = create_job_object(req.name)
+    job_object = create_job_object(req.name, req.value)
     res = batch_v1.create_namespaced_job(req.namespace, job_object)
-    return JobStatusResponse(status=json.loads(str(res.status)))
+    return JobStatusResponse(status=str(res.status))
 
 
 @app.delete("/jobs")
@@ -54,19 +54,19 @@ async def delete_job(req: DeleteJobRequest):
     """ delete specific job
     """
     res = batch_v1.delete_namespaced_job(req.name, req.namespace)
-    return JobStatusResponse(status=json.loads(res.status))
+    return JobStatusResponse(status=str(res.status))
 
 
-def create_job_object(job_name: str):
+def create_job_object(job_name: str, value=10):
     # Configure Pod template container
     container = client.V1Container(
-        name="pi",
+        name=job_name,
         image="perl",
-        command=["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"])
+        command=["perl", "-Mbignum=bpi", "-wle", f"print bpi({value})"])
 
     # Create and configure a spec section
     template = client.V1PodTemplateSpec(
-        metadata=client.V1ObjectMeta(labels={"app": "pi"}),
+        metadata=client.V1ObjectMeta(labels={"app": job_name}),
         spec=client.V1PodSpec(restart_policy="Never", containers=[container]))
 
     # Create the specification of deployment
