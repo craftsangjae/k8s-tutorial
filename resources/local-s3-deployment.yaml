@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: localstack-s3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: localstack-s3
+  template:
+    metadata:
+      labels:
+        app: localstack-s3
+    spec:
+      containers:
+      - name: localstack
+        image: localstack/localstack
+        ports:
+        - containerPort: 4566
+        env:
+        - name: SERVICES
+          value: s3
+        - name: DEFAULT_REGION
+          value: ap-northeast-2
+        - name: EDGE_PORT
+          value: "4566"
