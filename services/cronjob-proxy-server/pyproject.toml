@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "job-simple-proxy-server"
+name = "cronjob-proxy-server"
 version = "0.1.0"
 description = ""
 authors = ["craftsangjae <craftsangjae@gmail.com>"]
