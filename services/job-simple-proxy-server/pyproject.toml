@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "job-simple-proxy-server"
+version = "0.1.0"
+description = ""
+authors = ["craftsangjae <craftsangjae@gmail.com>"]
+readme = "README.md"
+packages = [{include = "proxy-server"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109.2"
+uvicorn = "^0.27.1"
+kubernetes = "^29.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
