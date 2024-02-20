@@ -1,5 +1,8 @@
 # Local S3 구성하기
 
+* related works
+    - [resources/local-s3.yaml](../resources/local-s3.yaml)
+
 ## 목표
 
 1. On-Premise 내 Object Storage가 있는 상황 재현을 위해, 유사한 도구인 localstack을 활용해서, on-premise s3을 구축합니다.
@@ -30,7 +33,7 @@ minikube의 클러스터는 독립적인 네트워크를 가집니다.
 ````shell
 # 4566을 31500으로 포워딩하기
 # kubectl port-forward <resource name> <host port>:<pod port>
-kubectl port-forward service/localstack-s3-service 31500:4566
+kubectl port-forward service/localstack-s3 31500:4566
 ````
 
 ### 2. 버킷 만들기 호출
