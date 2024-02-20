@@ -72,7 +72,7 @@ async def delete_job(req: DeleteJobRequest, response: Response) -> Union[JobStat
     """ delete specific job
     """
     try:
-        res = batch_v1.delete_namespaced_job(req.name, req.namespace)
+        res = batch_v1.delete_namespaced_cron_job(req.name, req.namespace)
     except ApiException as e:
         response.status_code = 403
         return f"ApiException : {e.reason}"
