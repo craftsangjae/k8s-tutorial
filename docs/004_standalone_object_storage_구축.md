@@ -1,5 +1,8 @@
 # MinIO를 통한 object Storage 구축
 
+* related works
+    - [resources/standalone_minio.yaml](../resources/standalone_minio.yaml)
+
 ## 목적
 
 S3 API와 호환되는 Object Storage 구축하는 작업 수행. 클러스터 내 단일 노드에 설치하고, 해당 노드의 volume에 마운트해서 동작시키도록 설계하였음
