@@ -49,7 +49,7 @@ def main(
 
     while c_date <= end_date:
         yahoo_df = yfinance.download(
-            ticker + "=x",
+            ticker,
             start=c_date,
             end=c_date + timedelta(days=1),
             interval="1m"
