@@ -98,8 +98,9 @@ def parse_raw_data(dfs: List[pd.DataFrame]) -> pd.DataFrame:
     :return:
     """
     df = pd.concat(dfs)
-    full_range = pd.date_range(start=df.index.min(), end=df.index.max(), freq='T')
-    full_df = df.reindex(full_range)
+    df.index = pd.to_datetime(df.index)
+    df = df[~df.index.duplicated(keep='first')]
+    full_df = df.resample('1T')
     return full_df.interpolate(method='linear')
 
 
@@ -112,7 +113,7 @@ def upload_parsed_data(df: pd.DataFrame, save_path: str):
     """
     global preprocess_storage
     logging.info(f"데이터를 {save_path}로 업로드합니다.")
-    data = df.to_parquet(index=False)
+    data = df.to_parquet()
     preprocess_storage.upload_object(save_path, data)
 
 
@@ -127,4 +128,5 @@ def parse_date(date_str: str):
 
 
 if __name__ == '__main__':
-    fire.Fire(main)
+    # fire.Fire(main)
+    main("AMZN", "2024-02-05", "2024-02-21", "master1/g1/prep/1/x.parquet")

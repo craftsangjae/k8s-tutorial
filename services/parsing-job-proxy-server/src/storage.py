@@ -36,7 +36,7 @@ class BaseObjectStorage:
 
     def exists_key(self, key) -> bool:
         try:
-            self.bucket(key).load()
+            self.bucket.Object(key).load()
             return True
         except ClientError as e:
             if e.response['Error']['Code'] == '404':
@@ -90,7 +90,7 @@ class FinanceDataStorage(BaseObjectStorage):
             raise NotFoundDataException(f"{self.to_key(ticker, data_date)} 키가 존재하지 않습니다.")
 
         csv_string = self.download_object(self.to_key(ticker, data_date)).decode('utf-8')
-        return pd.read_csv(StringIO(csv_string))
+        return pd.read_csv(StringIO(csv_string), index_col=0)
 
     def upload(self, ticker: str, data_date: date, data_df: pd.DataFrame) -> None:
         """ 데이터 업로드, 잘못된 포맷의 경우 에러 반환
@@ -146,4 +146,4 @@ class FinanceDataStorage(BaseObjectStorage):
     @classmethod
     def to_csv_string(cls, data_df: pd.DataFrame):
         """ 데이터를 csv 포맷으로 변경 """
-        return data_df.to_csv(index=False)
+        return data_df.to_csv()
