@@ -15,7 +15,7 @@ from typing import List
 from src.exception import NotFoundDataException
 from src.settings import settings
 from src.storage import FinanceDataStorage, BaseObjectStorage
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 import pandas as pd
 import fire
 import logging
