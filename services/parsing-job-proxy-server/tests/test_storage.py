@@ -27,7 +27,7 @@ def test_download_file_if_file_exists(
         mocker: MockerFixture
 ):
     mocker.patch("src.storage.FinanceDataStorage.exist", return_value=True)
-    mocker.patch("src.storage.FinanceDataStorage._read_data", return_value="Open,High,Low,Close\n1,1,1,1\n2,2,2,2")
+    mocker.patch("src.storage.BaseObjectStorage.download_object", return_value=b"Open,High,Low,Close\n1,1,1,1\n2,2,2,2")
 
     df = data_storage.download("ticker", date(2022, 3, 11))
     assert df.loc[0, 'Open'] == 1
@@ -70,6 +70,6 @@ def test_upload_success(
         "High": [1, 2, 3],
         "Low": [1, 2, 3]
     })
-    mocker.patch("src.storage.FinanceDataStorage._write_data", return_value=None)
+    mocker.patch("src.storage.FinanceDataStorage.upload_object", return_value=None)
 
     data_storage.upload("ticker", date(2022, 3, 11), df)
