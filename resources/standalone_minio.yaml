@@ -1,0 +1,79 @@
+# reference:
+# https://min.io/docs/minio/kubernetes/upstream/index.html
+# but I use Deployment instead of Pod
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minio-config
+data:
+  MINIO_ROOT_USER: "minio"
+  MINIO_ROOT_PASSWORD: "minio123"
+
+---
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: minio-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      nodeSelector:
+        # use `kubectl get nodes --show-labels`
+        # Specify a node label associated to the Worker Node on which you want to deploy the pod.
+        kubernetes.io/hostname: multinode-m02
+      volumes:
+        - name: storage
+          hostPath: # MinIO generally recommends using locally-attached volumes
+            path: /mnt/minio/data # Specify a path to a local drive or volume on the Kubernetes worker node
+            type: DirectoryOrCreate # The path to the last directory must exist
+
+      containers:
+        - name: minio
+          # Pulls the default Minio image from Docker Hub
+          image: minio/minio:latest
+          args:
+            - server
+            - /storage
+            - --console-address
+            - :9001
+          envFrom:
+            - configMapRef:
+                name: minio-config
+          volumeMounts:
+            - mountPath: /storage
+              name: storage # Corresponds to the `spec.volumes` Persistent Volume
+          ports:
+            - containerPort: 9000
+              hostPort: 9000
+              name: main-port
+            - containerPort: 9001
+              hostPort: 9001
+              name: console-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+spec:
+  ports:
+    - port: 9000
+      targetPort: 9000
+      protocol: TCP
+      name: main-port
+    - port: 9001
+      targetPort: 9001
+      protocol: TCP
+      name: console-port
+  selector:
+    app: minio

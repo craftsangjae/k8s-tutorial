@@ -52,3 +52,7 @@ K8S에 관련된 기술 노트 레포입니다. (1) K8S에 관련된 **기술적
 
     - **예제 상황**
         - 유저가 요청 시, N 자리 수에 대한 원주율을 계산하는 Job이 있다고 하자. 외부 API를 통해 서버를 호출하면 서버에서 K8S을 통해 원주율을 계산.
+
+- [standalone_object_storage_구축](docs/004_standalone_object_storage_구축.md)
+
+    - 목적 : K8S에 standalone object storage 구축
