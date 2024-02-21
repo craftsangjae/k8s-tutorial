@@ -1,4 +1,5 @@
 from io import StringIO
+from typing import Union
 
 import boto3
 import pandas as pd
@@ -49,7 +50,7 @@ class BaseObjectStorage:
         except ClientError:
             raise CommonException("object.get()을 수행하는 중 오류가 발생했습니다")
 
-    def upload_object(self, key: str, body: str) -> None:
+    def upload_object(self, key: str, body: Union[str, bytes]) -> None:
         try:
             self.bucket.Object(key).put(Body=body)
         except ClientError as e:
