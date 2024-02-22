@@ -4,13 +4,13 @@ from datetime import datetime, timedelta
 import fire
 import yfinance
 
-from proxy_manager.settings import load_settings
+from proxy_manager.configuration.settings import load_proxy_configurations
 from proxy_manager.storage import FinanceDataStorage
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-settings = load_settings()
+settings = load_proxy_configurations()
 
 # 데이터 스토리지 로드하기
 # (1) RAW 데이터 저장소

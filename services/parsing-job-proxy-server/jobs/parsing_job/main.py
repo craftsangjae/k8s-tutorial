@@ -5,15 +5,15 @@ from typing import List
 import fire
 import pandas as pd
 
+from proxy_manager.configuration.settings import load_proxy_configurations
 from proxy_manager.exceptions import NotFoundDataException
-from proxy_manager.settings import load_settings
 from proxy_manager.storage import FinanceDataStorage, BaseObjectStorage
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # 설정 정보 가져오기
-settings = load_settings()
+settings = load_proxy_configurations()
 
 # 데이터 스토리지 로드하기
 # (1) RAW 데이터 저장소
