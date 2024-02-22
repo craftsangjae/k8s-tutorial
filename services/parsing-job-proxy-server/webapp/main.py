@@ -37,7 +37,7 @@ async def create_job(
     """ Job 생성 요청
     :return:
     """
-    spawner.create(req.job_name, req.image, req.command)
+    spawner.create(req.job_name, req.image, req.args, req.configmap_names)
     return OkResponse(ok=True)
 
 

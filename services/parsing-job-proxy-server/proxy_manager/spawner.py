@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Optional
 
 from kubernetes import client, config
 from kubernetes.client import V1Job, ApiException
@@ -40,18 +40,24 @@ class K8SJobSpawner:
         except ApiException as e:
             raise FailedJobRequestException(f"K8SJobSpawner.read 실패했습니다. reason:{e.reason}")
 
-    def create(self, job_name: str, image: str, command: List[str]):
+    def create(self,
+               job_name: str,
+               image: str,
+               args: Optional[List[str]] = None,
+               configmap_names: Optional[List[str]] = None
+               ):
         """ job 생성하기
 
         :param job_name: 생성할 job의 이름
         :param image: 생성할 job의 이미지
-        :param command: 생성할 job에게 넘길 commands 파라미터 리스트
+        :param args: 생성할 job에게 넘길 arguments 리스트
+        :param configmap_names: job에 적용할 환경변수 목록들 (configmap)
         :return:
         """
         if self.exist(job_name):
             raise AlreadyExistedJobException(f"{self.namespace}에 이미 {job_name}이 존재합니다.")
 
-        job_object = self._create_job_object(job_name, image, command)
+        job_object = self._create_job_object(job_name, image, args, configmap_names)
         try:
             self.batch_client.create_namespaced_job(self.namespace, job_object)
         except ApiException as e:
@@ -102,24 +108,36 @@ class K8SJobSpawner:
             cls,
             job_name: str,
             image: str,
-            command: List[str]
+            args: Optional[List[str]] = None,
+            configmap_names: Optional[List[str]] = None
     ) -> V1Job:
+
+        # config_map_names 존재 시
+        if configmap_names:
+            env_from = [client.V1EnvFromSource(
+                config_map_ref=client.V1ConfigMapEnvSource(name=configmap_name)
+            ) for configmap_name in configmap_names]
+        else:
+            env_from = None
+
         container = client.V1Container(
             name=job_name,
             image=image,
-            command=command
+            args=args,
+            env_from=env_from
         )
 
         # Create and configure a spec section
         template = client.V1PodTemplateSpec(
             metadata=client.V1ObjectMeta(labels={"app": job_name}),
-            spec=client.V1PodSpec(restart_policy="Never", containers=[container]))
+            spec=client.V1PodSpec(restart_policy="Never", containers=[container]),
+        )
 
         # Create the specification of deployment
         spec = client.V1JobSpec(
             template=template,
             backoff_limit=4,
-            ttl_seconds_after_finished=86400  # 1일 동안 job 보관
+            ttl_seconds_after_finished=86400,  # 1일 동안 job 보관
         )
 
         # Instantiate the job object
