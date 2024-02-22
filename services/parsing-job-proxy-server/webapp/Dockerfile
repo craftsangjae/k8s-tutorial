@@ -17,6 +17,7 @@ RUN poetry install --no-dev --no-interaction --no-ansi
 
 # 작성한 코드에 대한 패키지 추가
 ADD proxy_manager/ /app/proxy_manager
-ADD jobs/ /app/jobs
+ADD webapp/ /app/webapp
 
-ENTRYPOINT ["python", "jobs/preloading_job/main.py"]
+ENTRYPOINT ["python", "-m", "uvicorn", "webapp.main:app"]
+CMD ["--host", "0.0.0.0", ""]

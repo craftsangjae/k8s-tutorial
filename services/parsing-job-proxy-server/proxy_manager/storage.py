@@ -7,7 +7,7 @@ import pandas as pd
 from botocore.exceptions import ClientError
 from pandas.api.types import is_numeric_dtype
 
-from proxy_manager.exceptions import NotReadyBucketException, CommonException, InvalidDataFormatException, \
+from proxy_manager.exceptions import NotReadyBucketException, ProxyManagerException, InvalidDataFormatException, \
     NotFoundDataException
 
 
@@ -43,14 +43,14 @@ class BaseObjectStorage:
         except ClientError as e:
             if e.response['Error']['Code'] == '404':
                 return False
-            raise CommonException("storage에 Object.load()을 수행하는 중 실패가 발행했습니다.")
+            raise ProxyManagerException("storage에 Object.load()을 수행하는 중 실패가 발행했습니다.")
 
     def download_object(self, key: str) -> bytes:
         try:
             obj = self.bucket.Object(key)
             return obj.get()['Body'].read()
         except ClientError:
-            raise CommonException("object.get()을 수행하는 중 오류가 발생했습니다")
+            raise ProxyManagerException("object.get()을 수행하는 중 오류가 발생했습니다")
 
     def upload_object(self, key: str, body: Union[str, bytes]) -> None:
         try:
@@ -58,7 +58,7 @@ class BaseObjectStorage:
         except ClientError as e:
             if e.response['Error']['Code'] == 'NoSuchBucket':
                 raise NotReadyBucketException(f"버킷({self.bucket_name})이 생성되지 않았습니다.")
-            raise CommonException("storage에 Object.put()을 수행하는 중 실패가 발생했습니다.")
+            raise ProxyManagerException("storage에 Object.put()을 수행하는 중 실패가 발생했습니다.")
 
 
 class FinanceDataStorage(BaseObjectStorage):

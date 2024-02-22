@@ -40,22 +40,22 @@ class K8SJobSpawner:
         except ApiException as e:
             raise FailedJobRequestException(f"K8SJobSpawner.read 실패했습니다. reason:{e.reason}")
 
-    def create(self, job_name: str, image: str, commands: List[str]):
+    def create(self, job_name: str, image: str, command: List[str]):
         """ job 생성하기
 
         :param job_name: 생성할 job의 이름
         :param image: 생성할 job의 이미지
-        :param commands: 생성할 job에게 넘길 commands 파라미터 리스트
+        :param command: 생성할 job에게 넘길 commands 파라미터 리스트
         :return:
         """
         if self.exist(job_name):
             raise AlreadyExistedJobException(f"{self.namespace}에 이미 {job_name}이 존재합니다.")
 
-        job_object = self._create_job_object(job_name, image, commands)
+        job_object = self._create_job_object(job_name, image, command)
         try:
             self.batch_client.create_namespaced_job(self.namespace, job_object)
         except ApiException as e:
-            raise FailedJobRequestException(f"K8SJobController.create 실패했습니다. reason:{e.reason}")
+            raise FailedJobRequestException(f"K8SJobSpawner.create 실패했습니다. reason:{e.reason}")
 
     def delete(self, job_name: str):
         """ job 삭제하기
@@ -69,7 +69,7 @@ class K8SJobSpawner:
         try:
             self.batch_client.delete_namespaced_job(job_name, self.namespace)
         except ApiException as e:
-            raise FailedJobRequestException(f"K8SJobController.delete 실패했습니다. reason:{e.reason}")
+            raise FailedJobRequestException(f"K8SJobSpawner.delete 실패했습니다. reason:{e.reason}")
 
     def exist(self, job_name: str) -> bool:
         """ job이 존재하는지 여부
@@ -81,7 +81,7 @@ class K8SJobSpawner:
             res = self.batch_client.list_namespaced_job(self.namespace, label_selector=f"app={job_name}")
             return len(res.items) > 0
         except ApiException as e:
-            raise FailedJobRequestException(f"K8SJobController.exist 실패했습니다. reason:{e.reason}")
+            raise FailedJobRequestException(f"K8SJobSpawner.exist 실패했습니다. reason:{e.reason}")
 
     @classmethod
     def _load_configuration(cls):
@@ -102,12 +102,12 @@ class K8SJobSpawner:
             cls,
             job_name: str,
             image: str,
-            commands: List[str]
+            command: List[str]
     ) -> V1Job:
         container = client.V1Container(
             name=job_name,
             image=image,
-            command=commands
+            command=command
         )
 
         # Create and configure a spec section
