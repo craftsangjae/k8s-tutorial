@@ -4,7 +4,7 @@ import pandas as pd
 import pytest as pytest
 from pytest_mock import MockerFixture
 
-from proxy_manager.exception import NotFoundDataException, InvalidDataFormatException
+from proxy_manager.exceptions import NotFoundDataException, InvalidDataFormatException
 from proxy_manager.storage import FinanceDataStorage
 
 
@@ -17,7 +17,7 @@ def test_raise_exception_when_try_to_download_file_that_doesnt_exist(
         data_storage: FinanceDataStorage,
         mocker: MockerFixture
 ):
-    mocker.patch("src.storage.FinanceDataStorage.exist", return_value=False)
+    mocker.patch("proxy_manager.storage.FinanceDataStorage.exist", return_value=False)
 
     with pytest.raises(NotFoundDataException):
         data_storage.download("ticker", date(2022, 3, 11))
@@ -27,8 +27,9 @@ def test_download_file_if_file_exists(
         data_storage: FinanceDataStorage,
         mocker: MockerFixture
 ):
-    mocker.patch("src.storage.FinanceDataStorage.exist", return_value=True)
-    mocker.patch("src.storage.BaseObjectStorage.download_object", return_value=b"Open,High,Low,Close\n1,1,1,1\n2,2,2,2")
+    mocker.patch("proxy_manager.storage.FinanceDataStorage.exist", return_value=True)
+    mocker.patch("proxy_manager.storage.BaseObjectStorage.download_object",
+                 return_value=b"Open,High,Low,Close\n0,1,1,1,1\n1,2,2,2,2")
 
     df = data_storage.download("ticker", date(2022, 3, 11))
     assert df.loc[0, 'Open'] == 1
@@ -71,6 +72,6 @@ def test_upload_success(
         "High": [1, 2, 3],
         "Low": [1, 2, 3]
     })
-    mocker.patch("src.storage.FinanceDataStorage.upload_object", return_value=None)
+    mocker.patch("proxy_manager.storage.FinanceDataStorage.upload_object", return_value=None)
 
     data_storage.upload("ticker", date(2022, 3, 11), df)
