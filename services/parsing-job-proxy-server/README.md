@@ -16,7 +16,7 @@ K8S에서 특정한 Job을 대신 생성해주는 역할을 수행하는 Web App
     * 주요 로직
         * [storage](proxy_manager/storage.py) : object storage에 대한 제어(생성/삭제/조회) 로직
         * [spawner](proxy_manager/spawner.py) : k8s job에 대한 제어(생성/삭제/조회) 로직
-        * [settings](proxy_manager/configuration/settings.py) : Configuration 정보를 불러오는 로직
+        * [configuration](proxy_manager/configuration/) : Configuration 정보를 불러오는 로직
 
 * [webapp](webapp/README.md)
     * 유저의 요청에 따라 job을 생성하는 proxy 서버, fastAPI로 구성되어 있음
