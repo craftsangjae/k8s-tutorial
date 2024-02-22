@@ -16,8 +16,8 @@ COPY jobs/__init__.py /app/jobs/__init__.py
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev --no-interaction --no-ansi
 
-# 패키지 코드 작성
+# 작성한 코드에 대한 패키지 추가
 ADD src/ /app/src
 ADD jobs/ /app/jobs
 
-ENTRYPOINT ["python", "jobs/parsing_job.py"]
+ENTRYPOINT ["python", "jobs/preloading_job/main.py"]

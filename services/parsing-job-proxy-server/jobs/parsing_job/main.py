@@ -1,24 +1,13 @@
-"""
-parsing_job
-
-목적
-    raw 데이터 스토리지에서 데이터를 읽어서,
-    데이터를 파싱하는 작업을 거친 후,
-    parquet 형태로 변환하여 prep 데이터 스토리지에 적재
-
-````python
-python jobs/parsing_job.py <TICKER> <start_date_str> <end_date_str> <save_path>
-````
-"""
+import logging
+from datetime import datetime, timedelta
 from typing import List
+
+import fire
+import pandas as pd
 
 from src.exception import NotFoundDataException
 from src.settings import settings
 from src.storage import FinanceDataStorage, BaseObjectStorage
-from datetime import datetime, timedelta
-import pandas as pd
-import fire
-import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

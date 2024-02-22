@@ -1,19 +1,11 @@
-"""
-preloading_job
-
-목적
-    raw 데이터 스토리지에서 원 데이터를 적재 요청
-
-````python
-python jobs/preloading_job.py <TICKER> <start_date_str> <end_date_str>
-````
-"""
-from src.settings import settings
-from src.storage import FinanceDataStorage
+import logging
 from datetime import datetime, timedelta
+
 import fire
 import yfinance
-import logging
+
+from src.settings import settings
+from src.storage import FinanceDataStorage
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
