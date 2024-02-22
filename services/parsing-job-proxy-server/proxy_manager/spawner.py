@@ -5,6 +5,7 @@ from kubernetes import client, config
 from kubernetes.client import V1Job, ApiException
 from kubernetes.config import ConfigException
 
+from proxy_manager.dto import K8SJobInfo
 from proxy_manager.exceptions import FailedJobRequestException, MissingConfigException, NotExistJobException, \
     AlreadyExistedJobException
 
@@ -25,6 +26,20 @@ class K8SJobSpawner:
         self._load_configuration()
         self.batch_client = client.BatchV1Api()
 
+    def read(self, job_name: str) -> K8SJobInfo:
+        if not self.exist(job_name):
+            raise NotExistJobException(f"{self.namespace}에 이미 {job_name}이 존재합니다.")
+        try:
+            job = self.batch_client.read_namespaced_job(name=job_name, namespace=self.namespace)
+            return K8SJobInfo(
+                job.metadata.name,
+                job.metadata.namespace,
+                job.metadata.creation_timestamp,
+                job.metadata.labels
+            )
+        except ApiException as e:
+            raise FailedJobRequestException(f"K8SJobSpawner.read 실패했습니다. reason:{e.reason}")
+
     def create(self, job_name: str, image: str, commands: List[str]):
         """ job 생성하기
 
@@ -38,10 +53,9 @@ class K8SJobSpawner:
 
         job_object = self._create_job_object(job_name, image, commands)
         try:
-            res = self.batch_client.create_namespaced_job(self.namespace, job_object)
+            self.batch_client.create_namespaced_job(self.namespace, job_object)
         except ApiException as e:
             raise FailedJobRequestException(f"K8SJobController.create 실패했습니다. reason:{e.reason}")
-        return res
 
     def delete(self, job_name: str):
         """ job 삭제하기
@@ -53,10 +67,9 @@ class K8SJobSpawner:
             raise NotExistJobException(f"{self.namespace}에 {job_name}이 존재하지 않습니다.")
 
         try:
-            res = self.batch_client.delete_namespaced_job(job_name, self.namespace)
+            self.batch_client.delete_namespaced_job(job_name, self.namespace)
         except ApiException as e:
             raise FailedJobRequestException(f"K8SJobController.delete 실패했습니다. reason:{e.reason}")
-        return res
 
     def exist(self, job_name: str) -> bool:
         """ job이 존재하는지 여부
@@ -105,7 +118,8 @@ class K8SJobSpawner:
         # Create the specification of deployment
         spec = client.V1JobSpec(
             template=template,
-            backoff_limit=4
+            backoff_limit=4,
+            ttl_seconds_after_finished=86400  # 1일 동안 job 보관
         )
 
         # Instantiate the job object

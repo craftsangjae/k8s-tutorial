@@ -17,6 +17,7 @@ pandas = "^2.2.0"
 fire = "^0.5.0"
 pyarrow = "^15.0.0"
 kubernetes = "^29.0.0"
+uvicorn = "^0.27.1"
 
 
 [tool.poetry.group.dev.dependencies]
