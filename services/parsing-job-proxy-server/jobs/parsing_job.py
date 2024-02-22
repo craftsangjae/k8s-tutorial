@@ -128,5 +128,4 @@ def parse_date(date_str: str):
 
 
 if __name__ == '__main__':
-    # fire.Fire(main)
-    main("AMZN", "2024-02-05", "2024-02-21", "master1/g1/prep/1/x.parquet")
+    fire.Fire(main)
