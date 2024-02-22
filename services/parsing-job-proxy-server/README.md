@@ -6,23 +6,22 @@ K8S 리소스(job)을 제어하는 WAS 서버 구축
 
 ## 시나리오
 
-Proxy-Server는 유저의 요청에 따라, K8S에서 특정한 Job을 대신 생성해주는 역할을 수행하는 Web Application Server 입니다.
+Proxy-Server는 유저의 요청에 따라,
+K8S에서 특정한 Job을 대신 생성해주는 역할을 수행하는 Web Application Server.
 
-## 구성
+### 구성
 
-### webapp 구성
+* [webapp](webapp/README.md)
+    * 유저의 요청에 따라 job을 생성하는 proxy 서버, fastAPI로 구성되어 있음
 
-* `proxy-server` : 유저의 요청에 따라 job을 생성하는 proxy 서버
-    * 경로 : [webapp](webapp/README.md)
+* [jobs](jobs/README.md)
+    * 여러 유형의 job을 정의한 job script
+    * 종류
+        * [jobs/parsing_job](jobs/parsing_job/README.md) : 데이터를 시스템에 적재하는 job
+        * [jobs/preloading_job](jobs/preloading_job/README.md) : 데이터를 시스템에 적재하는 job
 
-### Job 유형
-
-* `Preloading Job` : 데이터를 시스템에 적재하는 job
-    * 경로 : [jobs/parsing_job](jobs/parsing_job/README.md)
-
-* `Parsing Job` : 파싱한 데이터를 적재하는 Job
-    * 경로 : [jobs/preloading_job](jobs/preloading_job/README.md)
-
-#### Infrastructure 구성
-
-* `minio` : 데이터를 적재할 Object Storage
+* [src](src/)
+    * 프록시서버와 jobs에서 필요한 공통 컴포넌트들을 구현
+    * 주요 로직
+        * [storage](src/storage.py) : object storage에 대한 제어 로직
+        * [job_controller](src/job_controller.py) : k8s job에 대한 제어 로직
