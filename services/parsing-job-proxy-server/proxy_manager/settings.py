@@ -1,5 +1,5 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -16,4 +16,10 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
 
-settings = Settings()
+def load_settings():
+    """ settings 정보 가져오기
+    환경 변수와 .env 파일을 통해 정보를 불러오는 함수
+
+    :return:
+    """
+    return Settings()

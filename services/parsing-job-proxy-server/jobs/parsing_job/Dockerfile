@@ -9,14 +9,14 @@ RUN pip install poetry
 COPY pyproject.toml poetry.lock* README.md /app/
 
 # package 경로 생성 (pyproject.toml의 packages)
-COPY src/__init__.py /app/src/__init__.py
+COPY proxy_manager/__init__.py /app/proxy_manager/__init__.py
 
 # Poetry를 사용하여 의존성 설치
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev --no-interaction --no-ansi
 
 # 패키지 코드 작성
-ADD src/ /app/src
+ADD proxy_manager/ /app/proxy_manager
 ADD jobs/ /app/jobs
 
 ENTRYPOINT ["python", "jobs/parsing_job/main.py"]

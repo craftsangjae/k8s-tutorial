@@ -1,12 +1,14 @@
+from datetime import date
 from io import StringIO
 from typing import Union
 
 import boto3
 import pandas as pd
-from datetime import date
-from src.exception import NotReadyBucketException, CommonException, InvalidDataFormatException, NotFoundDataException
 from botocore.exceptions import ClientError
 from pandas.api.types import is_numeric_dtype
+
+from proxy_manager.exceptions import NotReadyBucketException, CommonException, InvalidDataFormatException, \
+    NotFoundDataException
 
 
 class BaseObjectStorage:

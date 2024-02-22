@@ -20,8 +20,9 @@ K8S에서 특정한 Job을 대신 생성해주는 역할을 수행하는 Web App
         * [jobs/parsing_job](jobs/parsing_job/README.md) : 데이터를 시스템에 적재하는 job
         * [jobs/preloading_job](jobs/preloading_job/README.md) : 데이터를 시스템에 적재하는 job
 
-* [src](src/)
-    * 프록시서버와 jobs에서 필요한 공통 컴포넌트들을 구현
+* [proxy_manager](proxy_manager/)
+    * 프록시서버와 jobs에서 필요한 core 매니징 정보 가져오기
     * 주요 로직
-        * [storage](src/storage.py) : object storage에 대한 제어 로직
-        * [job_controller](src/job_controller.py) : k8s job에 대한 제어 로직
+        * [settings](proxy_manager/settings.py) : Configuration에 대한 제어 로직
+        * [storage](proxy_manager/storage.py) : object storage에 대한 제어 로직
+        * [job_controller](proxy_manager/job_controller.py) : k8s job에 대한 제어 로직

@@ -5,7 +5,7 @@ description = ""
 authors = ["craftsangjae <craftsangjae@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{ include = "src" }]
+packages = [{ include = "proxy_manager" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"

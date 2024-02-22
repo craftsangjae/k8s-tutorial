@@ -1,10 +1,11 @@
+from datetime import date
+
 import pandas as pd
 import pytest as pytest
-
-from src.exception import NotFoundDataException, InvalidDataFormatException
-from src.storage import FinanceDataStorage
 from pytest_mock import MockerFixture
-from datetime import date
+
+from proxy_manager.exception import NotFoundDataException, InvalidDataFormatException
+from proxy_manager.storage import FinanceDataStorage
 
 
 @pytest.fixture
