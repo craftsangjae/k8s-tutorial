@@ -5,7 +5,7 @@ from typing import List
 import fire
 import pandas as pd
 
-from proxy_manager.configuration.settings import load_proxy_configurations
+from proxy_manager.configuration import load_proxy_configurations, StorageSettings
 from proxy_manager.exceptions import NotFoundDataException
 from proxy_manager.storage import FinanceDataStorage, BaseObjectStorage
 
@@ -13,23 +13,24 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # 설정 정보 가져오기
-settings = load_proxy_configurations()
+# 스토리지에 대한 configuration만 호출
+config = load_proxy_configurations(StorageSettings)
 
 # 데이터 스토리지 로드하기
 # (1) RAW 데이터 저장소
 raw_storage = FinanceDataStorage(
-    endpoint_url=settings.storage_endpoint_url,
-    access_key=settings.storage_access_key,
-    secret_key=settings.storage_secret_key,
-    bucket_name=settings.storage_raw_data_bucket_name
+    endpoint_url=config.storage_endpoint_url,
+    access_key=config.storage_access_key,
+    secret_key=config.storage_secret_key,
+    bucket_name=config.storage_raw_data_bucket_name
 )
 
 # (2) 전처리된 데이터 저장소
 preprocess_storage = BaseObjectStorage(
-    endpoint_url=settings.storage_endpoint_url,
-    access_key=settings.storage_access_key,
-    secret_key=settings.storage_secret_key,
-    bucket_name=settings.storage_prep_data_bucket_name
+    endpoint_url=config.storage_endpoint_url,
+    access_key=config.storage_access_key,
+    secret_key=config.storage_secret_key,
+    bucket_name=config.storage_prep_data_bucket_name
 )
 
 

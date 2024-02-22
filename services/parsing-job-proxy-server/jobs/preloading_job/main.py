@@ -4,21 +4,22 @@ from datetime import datetime, timedelta
 import fire
 import yfinance
 
-from proxy_manager.configuration.settings import load_proxy_configurations
+from proxy_manager.configuration import load_proxy_configurations, StorageSettings
 from proxy_manager.storage import FinanceDataStorage
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-settings = load_proxy_configurations()
+# 스토리지에 대한 configuration만 호출
+config = load_proxy_configurations(StorageSettings)
 
 # 데이터 스토리지 로드하기
 # (1) RAW 데이터 저장소
 raw_storage = FinanceDataStorage(
-    endpoint_url=settings.storage_endpoint_url,
-    access_key=settings.storage_access_key,
-    secret_key=settings.storage_secret_key,
-    bucket_name=settings.storage_raw_data_bucket_name
+    endpoint_url=config.storage_endpoint_url,
+    access_key=config.storage_access_key,
+    secret_key=config.storage_secret_key,
+    bucket_name=config.storage_raw_data_bucket_name
 )
 
 
