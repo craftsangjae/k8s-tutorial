@@ -1,0 +1,96 @@
+# reference:
+# https://min.io/docs/minio/kubernetes/upstream/index.html
+# but I use Deployment instead of Pod
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: storage-config
+data:
+  storage_endpoint_url: "http://minio.default.svc.cluster.local:9000"
+  storage_access_key: "iHZQ059rscCcoyxMMv2M"
+  storage_secret_key: "yNZko0FGrLFcjYMlk01LNUPHBFQkWIWqDXsKyj15"
+  storage_raw_data_bucket_name: "finance-stock"
+  storage_prep_data_bucket_name: "finance-stock-prep"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spawner-config
+data:
+  spawner_namespace: "default"
+
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: proxy-manager
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: proxy-manager-role
+rules:
+  - apiGroups: [ "batch", "" ]
+    resources: [ "jobs" ]
+    verbs: [ "create", "get", "list", "watch", "delete" ]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: proxy-manager-rolebinding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: proxy-manager
+    namespace: default
+roleRef:
+  kind: Role
+  name: proxy-manager-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parsing-job-proxy-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: parsing-job-proxy-server
+  template:
+    metadata:
+      labels:
+        app: parsing-job-proxy-server
+    spec:
+      serviceAccountName: proxy-manager
+      containers:
+        - name: parsing-job-proxy-server
+          image: craftsangjae/parsing-job-proxy-server:0.0.1
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: spawner-config
+            - configMapRef:
+                name: storage-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: parsing-job-proxy-server
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: parsing-job-proxy-server
