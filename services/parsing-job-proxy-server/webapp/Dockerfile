@@ -20,4 +20,4 @@ ADD proxy_manager/ /app/proxy_manager
 ADD webapp/ /app/webapp
 
 ENTRYPOINT ["python", "-m", "uvicorn", "webapp.main:app"]
-CMD ["--host", "0.0.0.0", ""]
+CMD ["--host", "0.0.0.0"]
