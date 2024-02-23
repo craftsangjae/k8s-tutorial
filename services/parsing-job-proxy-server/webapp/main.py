@@ -4,7 +4,7 @@ from fastapi import FastAPI, Depends, Request
 from starlette.responses import JSONResponse
 
 from proxy_manager.exceptions import ProxyManagerException
-from proxy_manager.spawner import K8SJobSpawner
+from proxy_manager.spawner.spawner import K8SJobSpawner
 from webapp.dependency import job_spawner_dependency
 from webapp.dto import ExistResponse, OkResponse, JobCreationRequest
 
