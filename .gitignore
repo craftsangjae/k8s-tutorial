@@ -276,3 +276,5 @@ pyrightconfig.json
 scripts/
 
 .DS_Store
+
+htpasswd
